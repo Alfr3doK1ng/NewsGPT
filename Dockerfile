@@ -14,7 +14,7 @@ RUN git clone https://github.com/streamlit/streamlit-example.git .
 COPY ./requirements.txt .
 COPY ./app.py .
 
-RUN pip install -r requirements.txt
+RUN pip3 install -r requirements.txt
 
 EXPOSE 8501
 

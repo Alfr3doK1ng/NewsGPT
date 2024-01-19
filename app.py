@@ -12,18 +12,33 @@ from langchain.chat_models import ChatOpenAI
 import streamlit as st
 
 import requests
+import time
 
 # Function to get the latest news
 def get_latest_news():
     try:
-        response = requests.get("http://localhost:8000/latest_news/")  # Update with your correct URL
+        response = requests.get("https://f881-75-6-176-129.ngrok-free.app/latest_news")  # Update news with Djagon app URL
         if response.status_code == 200:
-            return response.json()[:3]  # Get top 3 news items
+            return response.json()[:5]  # Get top 5 news items
         else:
             st.error("Failed to retrieve news: HTTP Status Code {}".format(response.status_code))
     except requests.exceptions.RequestException as e:
-        st.error(f"Error during requests to {url}: {str(e)}")
+        st.error(f"Error during requests to localhost:8000/latest_news: {str(e)}")
         return None
+    
+hover_css = """
+<style>
+.hover-lift img {
+    transition: transform 0.3s ease-in-out;
+}
+
+.hover-lift img:hover {
+    transform: translateY(-10px);
+}
+</style>
+"""
+st.markdown(hover_css, unsafe_allow_html=True)
+
 
 if __name__ == "__main__":
 
@@ -52,11 +67,8 @@ if __name__ == "__main__":
 
         
         full_query = f"{st.session_state.history} User: {query}"
-        # st.text_area('full_query', value = full_query)
         with st.spinner('Thinking...'):
-        # result = vector_store.similarity_search(query)
             answer = chain.run(full_query)
-        # st.text_area('LLM Answer: ', value=answer, height = 200)
 
         st.divider()
         
@@ -64,46 +76,31 @@ if __name__ == "__main__":
         st.session_state.history = f'{value} \n {"-" * 100} \n {st.session_state.history}'
         st.text_area(label='Chat History', value=st.session_state.history, key='history', height=400)
     
-    # # Sidebar - Latest News
-    # st.sidebar.title("Latest News")
-    # if st.sidebar.button('Load Latest News'):
-    #     latest_news = get_latest_news()
-    #     if latest_news:
-    #         for news_item in latest_news:
-    #             st.sidebar.markdown(f"**{news_item['title']}**")
-    #             st.sidebar.info(news_item['content'])
-    #             st.sidebar.write("---")
+
+    # Display latest news in sidebar
+    latest_news = get_latest_news()
 
 
+    # Sidebar with news items
+    st.sidebar.markdown(f"# Latest News")
+    st.sidebar.write(f"Last updated: {time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime())}")
+    st.sidebar.divider()
 
-# import os
-# from dotenv import load_dotenv, find_dotenv
-# load_dotenv(find_dotenv(), override = True)
+    if st.sidebar.button('Refresh News'):
+        latest_news = get_latest_news()
 
-# import pinecone
-# from langchain.vectorstores import Pinecone
-# from langchain.embeddings import OpenAIEmbeddings
+    for news_item in latest_news:
+        # Display the title
+        st.sidebar.markdown(f"{news_item['title']}")
 
-# from langchain.chains import RetrievalQA
-# from langchain.chat_models import ChatOpenAI
+        # Custom markdown to make the image a clickable link
+        st.sidebar.markdown(
+            f"<a href='{news_item['news_url']}' target='_blank'>" + 
+            f"<div class='hover-lift'><img src='{news_item['image_url']}' width='100%'></div>",
+            unsafe_allow_html=True
+        )
 
-# import streamlit as st
-
-# if __name__ == "__main__":
+        # Use an expander for the content
+        with st.sidebar.expander("Show More"):
+            st.write(news_item["content"])
     
-#     embeddings = OpenAIEmbeddings()
-
-#     index_name = "news"
-#     pinecone.init(api_key = os.environ.get('PINECONE_API_KEY'), environment = os.environ.get('PINECONE_ENV'))
-#     vector_store = Pinecone.from_existing_index(index_name, embeddings)
-#     st.session_state.vs = vector_store
-
-#     llm = ChatOpenAI(model='gpt-3.5-turbo', temperature = 1)
-#     retriever = vector_store.as_retriever(search_type='similarity', search_kwargs={'k': 10})
-#     chain = RetrievalQA.from_chain_type(llm=llm, chain_type='stuff', retriever = retriever)
-
-#     query = st.text_input('Ask a question about the content of recent news.')
-#     if query:
-#         result = vector_store.similarity_search(query)
-#         answer = chain.run(query)
-#         st.text_area('LLM Answer: ', value=answer)
