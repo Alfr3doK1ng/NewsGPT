@@ -23,3 +23,6 @@ I use a self-written data pipeline for aggregating news from major news provider
 ```
 https://github.com/Alfr3doK1ng/news_aggregator
 ```
+
+# Screenshot
+![Alt text](<Screenshot 2024-01-19 at 3.53.59 PM.png>)
