@@ -17,3 +17,9 @@ Now the app has been deployed to AWS! Check it out yourself and stay tuned!
 ```
 http://my-new-lb-2-281783900.us-east-2.elb.amazonaws.com:8501/
 ```
+
+# News Retrieval
+I use a self-written data pipeline for aggregating news from major news provider RSS streams.
+```
+https://github.com/Alfr3doK1ng/news_aggregator
+```
