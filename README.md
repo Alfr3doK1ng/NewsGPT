@@ -20,9 +20,7 @@ http://my-new-lb-2-281783900.us-east-2.elb.amazonaws.com:8501/
 
 # News Retrieval
 I use a self-written data pipeline for aggregating news from major news provider RSS streams.
-```
-https://github.com/Alfr3doK1ng/news_aggregator
-```
+[News Aggregator](https://github.com/Alfr3doK1ng/news_aggregator)
 
 # Screenshot
 ![Alt text](<Screenshot 2024-01-19 at 3.53.59 PM.png>)
